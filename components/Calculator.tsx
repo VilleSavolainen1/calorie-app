@@ -6,7 +6,7 @@ import GenderSelector from './GenderSelector';
 
 
 const initialValues = {
-    gender: '',
+    gender: 'male',
     weight: 0,
     height: 0,
     age: 0
@@ -29,34 +29,34 @@ interface Form {
 }
 
 const CalorieCalculatorForm: FC<Form> = ({ onSubmit }) => {
-    const [genderField, genderMeta, genderHelpers] = useField<string>('gender')
-    const [weightField, weightMeta, weightHelpers] = useField<string>('weight');
-    const [heightField, heightMeta, heightHelpers] = useField<string>('height');
-    const [ageField, ageMeta, ageHelpers] = useField<string>('age');
+    const [genderField, genderMeta, genderHelpers] = useField('gender')
+    const [weightField, weightMeta, weightHelpers] = useField('weight');
+    const [heightField, heightMeta, heightHelpers] = useField('height');
+    const [ageField, ageMeta, ageHelpers] = useField('age');
 
     return (
         <View>
             <GenderSelector genderHelpers={genderHelpers} />
             <TextInput
+                style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Weight(kg)"
-                value={weightField.value}
                 onChangeText={value => weightHelpers.setValue(value)}
             />
             <TextInput
+                style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Height(cm)"
-                value={heightField.value}
                 onChangeText={value => heightHelpers.setValue(value)}
             />
             <TextInput
+                style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Age"
-                value={ageField.value}
                 onChangeText={value => ageHelpers.setValue(value)}
             />
-            <Pressable onPress={onSubmit}>
-                <Text>Calculate</Text>
+            <Pressable onPress={onSubmit} style={styles.calculatebutton}>
+                <Text style={styles.calculatebuttontext}>Calculate</Text>
             </Pressable>
         </View>
     )
@@ -65,26 +65,59 @@ const CalorieCalculatorForm: FC<Form> = ({ onSubmit }) => {
 
 
 const Calculator: FC = () => {
-    const [result, setResult] = useState(0)
+    const [result, setResult] = useState('')
     const onSubmit = (values: { gender: string; weight: number; height: number; age: number; }) => {
         const gender = values.gender;
         const weight = values.weight;
         const height = values.height;
         const age = values.age;
 
-        if (!isNaN(age)) {
-            setResult(calculateCaloriesRequired(gender, weight, height, age))
+        if (weight > 0 && height > 0 && age > 0) {
+            setResult(`${calculateCaloriesRequired(gender, weight, height, age)} kcal`)
         }
     }
     return (
-        <View>
+        <View style={styles.container}>
             <Formik initialValues={initialValues} onSubmit={onSubmit}>
                 {({ handleSubmit }) => <CalorieCalculatorForm onSubmit={handleSubmit} />}
             </Formik>
-            <Text>{result}</Text>
+            <Text style={styles.result}>{result}</Text>
         </View>
     )
 };
+
+const styles = StyleSheet.create({
+    container: {
+        marginTop: 90,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textinput: {
+        height: 50,
+        fontSize: 20,
+        color: '#000',
+        padding: 6,
+        margin: 1,
+        backgroundColor: '#999',
+    },
+    calculatebutton: {
+        backgroundColor: '#333',
+        marginTop: 15,
+        height: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    calculatebuttontext: {
+        color: '#fff',
+        textAlign: 'center',
+        fontSize: 20,
+    },
+    result: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        marginTop: 10,
+    }
+})
 
 /*
 Men: BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) - (5.677 x age in years)
