@@ -1,7 +1,7 @@
 import React from 'react';
 import AppBar from './AppBar';
-import { View, StyleSheet } from 'react-native';
-import { Switch, Route, Redirect } from 'react-router-native';
+import { View } from 'react-native';
+import { Switch, Route } from 'react-router-native';
 import Calculator from './Calculator';
 import Home from './Home';
 
