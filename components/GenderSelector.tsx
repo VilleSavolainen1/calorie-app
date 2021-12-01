@@ -4,12 +4,13 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 interface Props {
     genderHelpers: {
         setValue: (gender: string) => void
-    }
+    },
 }
 
 
 const GenderSelector: FC<Props> = ({ genderHelpers }) => {
     const [selected, setSelected] = useState<string>('male')
+
     const setGender = (gender: string) => {
         genderHelpers.setValue(gender);
         selected === 'male' ? setSelected('female') : setSelected('male');

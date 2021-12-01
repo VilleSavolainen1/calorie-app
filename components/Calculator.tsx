@@ -14,12 +14,13 @@ const initialValues = {
 
 
 
-
-const calculateCaloriesRequired = (gender: string, weight: number, height: number, age: number) => {
+export const calculateCaloriesRequired = (gender: string, weight: number, height: number, age: number) => {
+    if (isNaN(weight) || isNaN(height) || isNaN(age)) return 'Please fill values';
+    if (weight === 0 || height === 0) return 'Please fill values';
     if (gender === 'male') {
-        return Math.floor(88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age));
+        return `${Math.floor(88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age))} kcal`;
     } else {
-        return Math.floor(447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age));
+        return `${Math.floor(447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age))} kcal`;
     }
 };
 
@@ -28,7 +29,7 @@ interface Form {
     onSubmit: () => void
 }
 
-const CalorieCalculatorForm: FC<Form> = ({ onSubmit }) => {
+export const CalorieCalculatorForm: FC<Form> = ({ onSubmit }) => {
     const [genderField, genderMeta, genderHelpers] = useField('gender')
     const [weightField, weightMeta, weightHelpers] = useField('weight');
     const [heightField, heightMeta, heightHelpers] = useField('height');
@@ -41,19 +42,19 @@ const CalorieCalculatorForm: FC<Form> = ({ onSubmit }) => {
                 style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Weight(kg)"
-                onChangeText={value => weightHelpers.setValue(value)}
+                onChangeText={value => weightHelpers.setValue(parseInt(value))}
             />
             <TextInput
                 style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Height(cm)"
-                onChangeText={value => heightHelpers.setValue(value)}
+                onChangeText={value => heightHelpers.setValue(parseInt(value))}
             />
             <TextInput
                 style={styles.textinput}
                 keyboardType='numeric'
                 placeholder="Age"
-                onChangeText={value => ageHelpers.setValue(value)}
+                onChangeText={value => ageHelpers.setValue(parseInt(value))}
             />
             <Pressable onPress={onSubmit} style={styles.calculatebutton}>
                 <Text style={styles.calculatebuttontext}>Calculate</Text>
@@ -71,10 +72,7 @@ const Calculator: FC = () => {
         const weight = values.weight;
         const height = values.height;
         const age = values.age;
-
-        if (weight > 0 && height > 0 && age > 0) {
-            setResult(`${calculateCaloriesRequired(gender, weight, height, age)} kcal`)
-        }
+        setResult(calculateCaloriesRequired(gender, weight, height, age))
     }
     return (
         <View style={styles.container}>
@@ -119,9 +117,4 @@ const styles = StyleSheet.create({
     }
 })
 
-/*
-Men: BMR = 88.362 + (13.397 x weight in kg) + (4.799 x height in cm) - (5.677 x age in years)
-
-Women: BMR = 447.593 + (9.247 x weight in kg) + (3.098 x height in cm) - (4.330 x age in years)
-*/
 export default Calculator;
